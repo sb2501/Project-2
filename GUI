@@ -1,0 +1,79 @@
+from tkinter import *
+from tkinter.filedialog import *
+
+
+
+win = Tk()
+win.title("Photo Editor")
+
+#Creates the menu widget, the tk window is the parent
+menu_bar = Menu(win)
+
+def open_file():
+    open_file = askopenfile(mode='r')
+    img = PhotoImage(open_file)
+    canvas.create_image(image=img)
+def save_file():
+    blahbla
+
+#Destroys root window
+def exit():
+    win.destroy()
+#The drop down portion of the menu which shows open, save, and exit options.
+file_tab = Menu(menu_bar)
+file_tab.add_command(label="Open",command=open_file)
+file_tab.add_command(label="Save",command=save_file)
+file_tab.add_command(label="Exit",command=exit)
+
+menu_bar.add_cascade(menu=file_tab,label='File')
+edit_tab = Menu(menu_bar)
+
+main_frame = Frame(win)
+main_frame.grid(row=1)
+
+canvas_frame = Frame(main_frame)
+canvas_frame.grid(column=2)
+
+canvas = Canvas(canvas_frame,bg="white")
+canvas.grid()
+
+#Set initial x and y coordinates to 0 for line
+last_x, last_y = 0,0
+
+def set_xy(event):
+    #Reference the variables in function
+    global last_x,last_y
+    #Set global equal to current mouse coordinates
+    last_x,last_y = event.x,event.y
+
+def draw_pen(event):
+    #Reference changed global variables
+    global last_x,last_y
+    #Take setxy values for x1 and y1, then set x2 and y2 equal to current mouse coordinates
+    c = canvas.create_line(last_x,last_y,event.x,event.y,fill="red")
+    #Change the start coordinates to the end coordinates
+    last_x,last_y = event.x, event.y
+            
+                
+canvas.bind("<Button-1>",set_xy)                
+canvas.bind("<B1-Motion>",draw_pen)
+
+#Work on this!!
+def select_color():
+    thisthat
+edit_tab.add_command(label="Select a Color",command="")
+
+#Removes shape items within canvas
+def clear():
+    canvas.delete('all')
+    
+edit_tab.add_command(label="Clear",command=clear)
+
+def change_bg_color():
+    canvas.configure(bg="black")
+edit_tab.add_command(label="Background Color...",command=change_bg_color)
+menu_bar.add_cascade(menu=edit_tab,label='Edit')
+
+#Adds the menu widget to the main window
+win.configure(menu=menu_bar)
+win.mainloop()
