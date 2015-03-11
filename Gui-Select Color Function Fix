@@ -1,0 +1,135 @@
+from tkinter import *
+from tkinter.filedialog import *
+
+
+default_color = "black"
+
+win = Tk()
+win.title("Photo Editor")
+
+#Creates the menu widget, the tk window is the parent
+menu_bar = Menu(win)
+
+def open_file():
+    open_file = askopenfile(mode='r')
+    img = PhotoImage(open_file)
+    
+    return img
+def save_file():
+    blahbla
+    
+
+#Destroys root window
+def exit():
+    win.destroy()
+#The drop down portion of the menu which shows open, save, and exit options.
+file_tab = Menu(menu_bar)
+file_tab.add_command(label="Open",command=open_file)
+file_tab.add_command(label="Save",command=save_file)
+file_tab.add_command(label="Exit",command=exit)
+
+menu_bar.add_cascade(menu=file_tab,label='File')
+edit_tab = Menu(menu_bar)
+
+main_frame = Frame(win)
+main_frame.grid(row=1)
+
+canvas_frame = Frame(main_frame)
+canvas_frame.grid(column=2)
+
+canvas = Canvas(canvas_frame,bg="white")
+canvas.grid()
+
+#Set initial x and y coordinates to 0 for line
+last_x, last_y = 0,0
+
+def set_xy(event):
+    #Reference the variables in function
+    global last_x,last_y
+    #Set global equal to current mouse coordinates
+    last_x,last_y = event.x,event.y
+
+
+def draw_pen(event):
+    #Reference changed global variables
+    global last_x,last_y
+    #Take sexy values for x1 and y1, then set x2 and y2 equal to current mouse coordinates
+    canvas.create_line(last_x,last_y,event.x,event.y,fill=default_color)
+    #Change the start coordinates to the end coordinates
+    last_x,last_y = event.x, event.y
+    
+            
+                
+canvas.bind("<Button-1>",set_xy)                
+canvas.bind("<B1-Motion>",draw_pen)
+
+#Work on this!!
+def select_color():
+    def confirm():
+        global default_color
+        red = value_red.get()
+        green = value_green.get()
+        blue = value_blue.get()
+        value_red.set(red)
+        value_green.set(green)
+        value_blue.set(blue)
+        color =  '#%s%s%s' % (red,green,blue)
+        default_color = color
+        print (default_color)
+    
+    top = Toplevel()
+    top_frame = Frame(top)
+    top_frame.grid(column=1)
+    top_frame.configure(width=200,height=200)
+    
+    
+    value_red = StringVar()
+    value_green = StringVar()
+    value_blue = StringVar()
+    
+    
+    label_red = Label(top_frame,text="Red")
+    label_red.grid(row=0,column=0)
+    entry_red = Entry(top_frame,textvariable=value_red)
+    entry_red.grid(row=0,column=1)
+    label_green = Label(top_frame,text="Green")
+    label_green.grid(row=2,column=0)
+    entry_green = Entry(top_frame,textvariable=value_green)
+    entry_green.grid(row=2,column=1)
+    label_blue = Label(top_frame,text="Blue")
+    label_blue.grid(row=4,column=0)
+    entry_blue = Entry(top_frame,textvariable=value_blue)
+    entry_blue.grid(row=4,column=1)
+    
+    
+    
+    
+    confirm_button = Button(top_frame,text="Confirm",command=confirm)
+    confirm_button.grid(row=5,column=1)
+    
+    return red,green,blue
+
+    
+ 
+
+    
+    
+  
+    
+
+edit_tab.add_command(label="Select a Color",command=select_color)
+
+#Removes shape items within canvas
+def clear():
+    canvas.delete('all')
+    
+edit_tab.add_command(label="Clear",command=clear)
+
+def change_bg_color():
+    canvas.configure(bg="black")
+edit_tab.add_command(label="Background Color...",command=change_bg_color)
+menu_bar.add_cascade(menu=edit_tab,label='Edit')
+
+#Adds the menu widget to the main window
+win.configure(menu=menu_bar)
+win.mainloop()
