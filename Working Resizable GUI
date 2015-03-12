@@ -1,0 +1,118 @@
+from tkinter import *
+from tkinter.filedialog import *
+
+# a subclass of Canvas for dealing with resizing of windows
+class ResizingCanvas(Canvas):
+    def __init__(self,parent,**kwargs):
+        Canvas.__init__(self,parent,**kwargs)
+        self.bind("<Configure>", self.on_resize)
+        self.height = self.winfo_reqheight()
+        self.width = self.winfo_reqwidth()
+
+    def on_resize(self,event):
+        # determine the ratio of old width/height to new width/height
+        wscale = float(event.width)/self.width
+        hscale = float(event.height)/self.height
+        self.width = event.width
+        self.height = event.height
+        # resize the canvas 
+        self.config(width=self.width, height=self.height)
+        # rescale all the objects tagged with the "all" tag
+        self.scale("all",0,0,wscale,hscale)
+
+     
+def open_file():
+    open_file = askopenfile(mode='r')
+    img = PhotoImage(open_file)
+    canvas.create_image(image=img)
+
+def save_file():
+    blahbla
+
+#Destroys root window
+def exit():
+    win.destroy()
+    
+def do_nothing():
+    playNote(100,100,100)
+    
+
+
+def main():
+    win = Tk()
+    myframe = Frame(win)
+    menu_bar = Menu(win)
+    win.config(menu=menu_bar)
+    myframe.pack(fill=BOTH, expand=YES)
+    mycanvas = ResizingCanvas(myframe,width=850, height=400, bg="white", highlightthickness=0)
+    mycanvas.pack(fill=BOTH, expand=YES)
+    
+    def set_xy(event):
+        #Reference the variables in function
+        global last_x,last_y
+        #Set global equal to current mouse coordinates
+        last_x,last_y = event.x,event.y
+
+    def draw_pen(event):
+        #Reference changed global variables
+        global last_x,last_y
+        #Take setxy values for x1 and y1, then set x2 and y2 equal to current mouse coordinates
+        c = mycanvas.create_line(last_x,last_y,event.x,event.y)
+        #Change the start coordinates to the end coordinates
+        last_x,last_y = event.x, event.y
+    
+    file_tab = Menu(menu_bar)
+    menu_bar.add_cascade(menu=file_tab,label='File')
+    file_tab.add_command(label="Open",command=open_file)
+    file_tab.add_command(label="Save",command=save_file)
+    file_tab.add_separator()
+    file_tab.add_command(label="Exit",command=exit)
+
+    toolbar = Frame(win, bg="blue")
+
+    #***********Button Functionality***********
+    penWhite = Button(toolbar, text="White", command=do_nothing)
+    penWhite.pack(side=LEFT, padx=2, pady=2)
+
+    penBlack = Button(toolbar, text="Black", command=do_nothing)
+    penBlack.pack(side=LEFT, padx=2, pady=2)
+
+    penRed = Button(toolbar, text="Red", command=do_nothing)
+    penRed.pack(side=LEFT, padx=2, pady=2)
+
+    penOrange = Button(toolbar, text="Orange", command=do_nothing)
+    penOrange.pack(side=LEFT, padx=2, pady=2)
+
+    penYellow = Button(toolbar, text="Yellow", command=do_nothing)
+    penYellow.pack(side=LEFT, padx=2, pady=2)
+
+    penGreen = Button(toolbar, text="Green", command=do_nothing)
+    penGreen.pack(side=LEFT, padx=2, pady=2)
+
+    penBlue = Button(toolbar, text="Blue", command=do_nothing)
+    penBlue.pack(side=LEFT, padx=2, pady=2)
+
+    penPurple = Button(toolbar, text="Purple", command=do_nothing)
+    penPurple.pack(side=LEFT, padx=2, pady=2)
+
+    penCustom = Button(toolbar, text="Custom", command=do_nothing)
+    penCustom.pack(side=LEFT, padx=2, pady=2)
+    
+    toolbar.pack(side=LEFT, fill=X)
+    
+    #***************PEN FUNCUTANILITY********************
+    #Set initial x and y coordinates to 0 for line
+    last_x, last_y = 0,0
+
+          
+    mycanvas.bind("<Button-1>",set_xy)                
+    mycanvas.bind("<B1-Motion>",draw_pen)
+
+    #Adds the menu widget to the main window
+    win.configure(menu=menu_bar)
+    # tag all of the drawn widgets
+    mycanvas.addtag_all("all")
+    win.mainloop()
+
+if __name__ == "__main__":
+    main()
